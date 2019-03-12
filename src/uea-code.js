@@ -146,7 +146,7 @@ class UEACode {
 	 * @param  {string[]} [options.lastNames]  Required for type `human` only. An array of last names of the human in order of priority.
 	 * @param  {string}   [options.fullName]   Required for type `org` only. The full name of the organization.
 	 * @param  {string}   [options.nameAbbrev] For type `org` only. The name abbreviation of the organization.
-	 * @return {string[] Possible UEA codes for the codeholder in decreasing order of usability. May be empty.
+	 * @return {string[]} Possible UEA codes for the codeholder in decreasing order of usability. May be empty.
 	 */
 	static suggestCodes ({
 		type,
