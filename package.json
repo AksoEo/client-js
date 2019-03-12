@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "gulp compile-src"
+    "build": "./node_modules/.bin/gulp compile-src",
+    "preinstall": "npm install --ignore-scripts && npm run build"
   },
   "repository": {
     "type": "git",
