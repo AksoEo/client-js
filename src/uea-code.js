@@ -161,10 +161,10 @@ class UEACode {
 			if (typeof x !== 'string') {
 				return '';
 			}
-			return x.
-				toLowerCase()
-				normalize('NFD')
-				replace(/[^a-z]/gi, '');
+			return x
+				.toLowerCase()
+				.normalize('NFD')
+				.replace(/[^a-z]/gi, '');
 		};
 		const data = {
 			f: firstNames.map(normalize),
