@@ -1,4 +1,5 @@
 import Client from './client';
+import { Headers } from 'cross-fetch';
 
 /**
  * A client using app authentication to communicate with the AKSO API
@@ -53,8 +54,7 @@ class UserClient {
 	async logOut () {
 		await this.req({
 			method: 'DELETE',
-			path: '/auth',
-			_allowLoggedOut: true
+			path: '/auth'
 		});
 		this.loggedIn = false;
 	}
@@ -107,6 +107,12 @@ class UserClient {
 		if (!this.loggedIn && !options._allowLoggedOut) { throw new Error('Call UserClient#logIn to log in first'); }
 
 		options.credentials = 'include';
+		
+		if (!options.headers) { options.headers = new Headers(); }
+		if (this.loggedIn) {
+			options.headers.set('X-CSRF-Token', this.csrfToken);
+		}
+
 		return this.client.req(options);
 	}
 }
