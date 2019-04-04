@@ -4,6 +4,10 @@ import Client from './client';
  * A client using app authentication to communicate with the AKSO API
  */
 class UserClient {
+	/**
+	 * @param {Object} options
+	 * @param {Object} [options.host] The host address of the AKSO API
+	 */
 	constructor ({
 		host
 	} = {}) {
@@ -15,6 +19,12 @@ class UserClient {
 		this.csrfToken = null;
 	}
 
+	/**
+	 * Logs in as a user
+	 * @param  {string} login    The user's old or new UEA code or their email address
+	 * @param  {string} password The user's password
+	 * @return {Object}          The response from `GET /auth`
+	 */
 	async logIn (login, password) {
 		await this.client.req({
 			method: 'PUT',
@@ -36,6 +46,9 @@ class UserClient {
 		return resAuthCheck.body;
 	}
 
+	/**
+	 * Logs out
+	 */
 	async logOut () {
 		await this.client.req({
 			method: 'DELETE',
@@ -44,6 +57,10 @@ class UserClient {
 		this.loggedIn = false;
 	}
 
+	/**
+	 * @internal
+	 * Makes a request to the AKSO API
+	 */
 	req (options) {
 		if (!this.loggedIn) { throw new Error('Call UserClient#logIn to log in first'); }
 

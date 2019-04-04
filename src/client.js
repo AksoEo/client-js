@@ -2,6 +2,7 @@ import crossFetch, { Headers } from 'cross-fetch';
 const fetch = require('fetch-cookie')(crossFetch);
 
 import msgpack from 'msgpack-lite';
+import Url from 'url';
 
 import { msgpackCodec } from '.';
 
@@ -9,6 +10,10 @@ import { msgpackCodec } from '.';
  * A client using no authentication to communicate with the AKSO API
  */
 class Client {
+	/**
+	 * @param {Object} options
+	 * @param {Object} [options.host] The host address of the AKSO API
+	 */
 	constructor ({
 		host = 'http://localhost:1111'
 	} = {}) {
@@ -16,6 +21,7 @@ class Client {
 	}
 
 	/**
+	 * @internal
 	 * Performs an HTTP request to the AKSO API
 	 * @param  {Object}  options
 	 * @param  {string}  options.method        The HTTP method (verb)
@@ -39,7 +45,7 @@ class Client {
 		credentials = 'omit'
 	} = {}) {
 		const url = new URL(this.host);
-		url.pathname = path;
+		url.pathname = Url.resolve(url.pathname, path);
 
 		headers.append('Accept', acceptMime);
 
