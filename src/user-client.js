@@ -41,6 +41,7 @@ class UserClient {
 			method: 'DELETE',
 			path: '/auth'
 		});
+		this.loggedIn = false;
 	}
 
 	req (options) {
