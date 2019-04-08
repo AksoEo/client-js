@@ -1,8 +1,6 @@
 import crossFetch, { Headers } from 'cross-fetch';
 const fetch = require('fetch-cookie')(crossFetch);
-
 import msgpack from 'msgpack-lite';
-import Url from 'url';
 
 import ClientInterface from './client-interface';
 import { msgpackCodec } from '.';
@@ -32,6 +30,7 @@ class Client extends ClientInterface {
 	 * @param  {Object}  options
 	 * @param  {string}  options.method        The HTTP method (verb)
 	 * @param  {string}  options.path          The HTTP path (resource)
+	 * @param  {string}  [options.query]       The query to pass to the query string
 	 * @param  {any}     [options.body]        The body to send in the request or `null`. If `contentType` is `application/vnd.msgpack` or `application/json` it's automatically encoded
 	 * @param  {boolean} [options.throwErrors] Whether to throw errors when the status isn't 2xx
 	 * @param  {string}  [options.contentType] The content type of the body, if present
@@ -43,6 +42,7 @@ class Client extends ClientInterface {
 	async req ({
 		method,
 		path,
+		query = {},
 		body = null,
 		throwErrors = true,
 		contentType = 'application/vnd.msgpack',
@@ -50,8 +50,7 @@ class Client extends ClientInterface {
 		headers = new Headers(),
 		credentials = 'omit'
 	} = {}) {
-		const url = new URL(this.host);
-		url.pathname = Url.resolve(url.pathname, path);
+		const url = this.createURL(path, query);
 
 		headers.append('Accept', acceptMime);
 
@@ -84,11 +83,12 @@ class Client extends ClientInterface {
 			ok: res.ok,
 			resTime: res.headers.get('x-response-time'),
 			bodyOk: false,
-			body: null
+			body: null,
+			contentType: null
 		};
 
 		// Parse the body
-		const resContentType = res.headers.get('Content-Type');
+		const resContentType = resObj.contentType = res.headers.get('Content-Type');
 		if (!resContentType) {
 			resObj.body = await res.arrayBuffer();
 
@@ -110,8 +110,17 @@ class Client extends ClientInterface {
 		}
 
 		if (throwErrors && !res.ok) {
-			const error = new Error(`Failed at ${method} ${path}`);
-			error.statusCode = error.status;
+			let actualMethod = method;
+			if (headers.has('X-Http-Method-Override')) {
+				actualMethod = headers.get('X-Http-Method-Override') + ' (using method override)';
+			}
+			let msg = `Failed at ${actualMethod} ${path} (status ${res.status}`;
+			if (resContentType.includes('text/plain')) {
+				msg += `: "${resObj.body}"`;
+			}
+			msg += ')';
+			const error = new Error(msg);
+			error.statusCode = res.status;
 			error.response = res;
 			throw error;
 		}
