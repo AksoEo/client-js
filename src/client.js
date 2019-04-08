@@ -4,12 +4,13 @@ const fetch = require('fetch-cookie')(crossFetch);
 import msgpack from 'msgpack-lite';
 import Url from 'url';
 
+import ClientInterface from './client-interface';
 import { msgpackCodec } from '.';
 
 /**
  * A client using no authentication to communicate with the AKSO API
  */
-class Client {
+class Client extends ClientInterface {
 	/**
 	 * @param {Object} options
 	 * @param {Object} [options.host]      The host address of the AKSO API
@@ -19,6 +20,8 @@ class Client {
 		host = 'http://localhost:1111',
 		userAgent = `AKSOClientJS/${require('../package.json').version} (+https://github.com/AksoEo/client-js)`
 	} = {}) {
+		super();
+
 		this.host = host;
 		this.userAgent = userAgent;
 	}

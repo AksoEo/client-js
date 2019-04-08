@@ -1,10 +1,12 @@
 import { Headers } from 'cross-fetch';
+
+import ClientInterface from './client-interface';
 import Client from './client';
 
 /**
  * A client using app authentication to communicate with the AKSO API
  */
-class AppClient {
+class AppClient extends ClientInterface {
 	/**
 	 * @param {Object} options
 	 * @param {string} options.apiKey      The hex encoded api key
@@ -18,6 +20,8 @@ class AppClient {
 		host,
 		userAgent
 	} = {}) {
+		super();
+
 		this.apiKey = apiKey;
 		this.apiSecret = apiSecret;
 		this.client = new Client({

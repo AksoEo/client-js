@@ -1,10 +1,12 @@
-import Client from './client';
 import { Headers } from 'cross-fetch';
+
+import ClientInterface from './client-interface';
+import Client from './client';
 
 /**
  * A client using app authentication to communicate with the AKSO API
  */
-class UserClient {
+class UserClient extends ClientInterface {
 	/**
 	 * @param {Object} options
 	 * @param {Object} [options.host] The host address of the AKSO API
@@ -12,6 +14,8 @@ class UserClient {
 	constructor ({
 		host
 	} = {}) {
+		super();
+
 		this.client = new Client({
 			host: host
 		});
