@@ -12,12 +12,15 @@ import { msgpackCodec } from '.';
 class Client {
 	/**
 	 * @param {Object} options
-	 * @param {Object} [options.host] The host address of the AKSO API
+	 * @param {Object} [options.host]      The host address of the AKSO API
+	 * @param {string} [options.userAgent] The user agent string (ignored in the browser)
 	 */
 	constructor ({
-		host = 'http://localhost:1111'
+		host = 'http://localhost:1111',
+		userAgent = `AKSOClientJS/${require('../package.json').version} (+https://github.com/AksoEo/client-js)`
 	} = {}) {
 		this.host = host;
+		this.userAgent = userAgent;
 	}
 
 	/**
@@ -50,7 +53,7 @@ class Client {
 		headers.append('Accept', acceptMime);
 
 		if (typeof window === 'undefined') { // Only if running on node.js
-			headers.set('User-Agent', `AKSOClientJS/${require('../package.json').version} (+https://github.com/AksoEo/client-js)`);
+			headers.set('User-Agent', this.userAgent);
 		}
 
 		const fetchOptions = {
