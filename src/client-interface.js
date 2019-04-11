@@ -36,10 +36,10 @@ class ClientInterface {
 	 *                                   [ 'id', 'name' ] -> 'id,name'
 	 *                               `search` will be csv-ified if it's an object:
 	 *                                   { str: "john smith", cols: [ 'firstName', 'lastName' ] } -> '"john smith",firstName,lastName'
-	 * @param  {boolean} [returnRes] Whether to return the full response object instead of just the body. Defaults to false.
-	 * @return {any} The body of the response, or the response object if `returnRes` is true.
+	 *                               `filter` will be encoded using base64url or make a switch to method overriding as necessary
+	 * @return {Object} The response
 	 */
-	async get (path, query = {}, returnRes = false) {
+	async get (path, query = {}) {
 		const encodedQuery = {};
 		for (let [key, val] of Object.entries(query)) {
 			if (key === 'order') {
@@ -101,8 +101,7 @@ class ClientInterface {
 			});
 		}
 
-		if (returnRes) { return res; }
-		else { return res.body; }
+		return res;
 	}
 
 	/**
