@@ -105,6 +105,18 @@ class ClientInterface {
 	}
 
 	/**
+	 * Makes a delete request
+	 * @param  {string} path
+	 * @return {Object} The response
+	 */
+	delete (path) {
+		return this.req({
+			method: 'DELETE',
+			path: path
+		});
+	}
+
+	/**
 	 * Refreshes the stored permissions
 	 * @return {Object} The permissions (see `GET /perms``)
 	 */
