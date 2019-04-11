@@ -107,12 +107,46 @@ class ClientInterface {
 	/**
 	 * Makes a delete request
 	 * @param  {string} path
+	 * @param  {Object} [query]
 	 * @return {Object} The response
 	 */
-	delete (path) {
+	delete (path, query = {}) {
 		return this.req({
 			method: 'DELETE',
-			path: path
+			path: path,
+			query: query
+		});
+	}
+
+	/**
+	 * Makes a post request
+	 * @param  {string} path
+	 * @param  {Object} [body]
+	 * @param  {Object} [query]
+	 * @return {Object} The response
+	 */
+	post (path, body, query = {}) {
+		return this.req({
+			method: 'POST',
+			path: path,
+			query: query,
+			body: body
+		});
+	}
+
+	/**
+	 * Makes a put request
+	 * @param  {string} path
+	 * @param  {Object} [body]
+	 * @param  {Object} [query]
+	 * @return {Object} The response
+	 */
+	put (path, body, query = {}) {
+		return this.req({
+			method: 'PUT',
+			path: path,
+			query: query,
+			body: body
 		});
 	}
 
