@@ -1,9 +1,15 @@
 import crossFetch, { Headers } from 'cross-fetch';
-const fetch = require('fetch-cookie')(crossFetch);
 import msgpack from 'msgpack-lite';
 
 import ClientInterface from './client-interface';
 import { msgpackCodec } from '.';
+
+let fetch;
+if (typeof window === 'undefined') { // we only need fetch-cookie on nodejs
+	fetch = require('fetch-cookie')(crossFetch);
+} else {
+	fetch = crossFetch;
+}
 
 /**
  * A client using no authentication to communicate with the AKSO API
