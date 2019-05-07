@@ -123,14 +123,16 @@ class ClientInterface {
 	 * @param  {string} path
 	 * @param  {Object} [body]
 	 * @param  {Object} [query]
+	 * @param  {Object} [files]
 	 * @return {Object} The response
 	 */
-	post (path, body, query = {}) {
+	post (path, body = null, query = {}, files = []) {
 		return this.req({
 			method: 'POST',
 			path: path,
 			query: query,
-			body: body
+			body: body,
+			files: files
 		});
 	}
 
@@ -139,14 +141,16 @@ class ClientInterface {
 	 * @param  {string} path
 	 * @param  {Object} [body]
 	 * @param  {Object} [query]
+	 * @param  {Object} [files]
 	 * @return {Object} The response
 	 */
-	put (path, body, query = {}) {
+	put (path, body = null, query = {}, files = []) {
 		return this.req({
 			method: 'PUT',
 			path: path,
 			query: query,
-			body: body
+			body: body,
+			files: files
 		});
 	}
 

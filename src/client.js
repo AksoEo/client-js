@@ -1,5 +1,6 @@
 import crossFetch, { Headers } from 'cross-fetch';
 import msgpack from 'msgpack-lite';
+import FormData from 'form-data';
 
 import ClientInterface from './client-interface';
 import { msgpackCodec } from '.';
@@ -33,16 +34,18 @@ class Client extends ClientInterface {
 	/**
 	 * @internal
 	 * Performs an HTTP request to the AKSO API
-	 * @param  {Object}  options
-	 * @param  {string}  options.method        The HTTP method (verb)
-	 * @param  {string}  options.path          The HTTP path (resource)
-	 * @param  {string}  [options.query]       The query to pass to the query string
-	 * @param  {any}     [options.body]        The body to send in the request or `null`. If `contentType` is `application/vnd.msgpack` or `application/json` it's automatically encoded
-	 * @param  {boolean} [options.throwErrors] Whether to throw errors when the status isn't 2xx
-	 * @param  {string}  [options.contentType] The content type of the body, if present
-	 * @param  {string}  [options.acceptMime]  The expected mime type of the response body
-	 * @param  {Headers} [options.headers]     Headers to pass to the request
-	 * @param  {string}  [options.credentials] The Request.credentials setting
+	 * @param  {Object}   options
+	 * @param  {string}   options.method        The HTTP method (verb)
+	 * @param  {string}   options.path          The HTTP path (resource)
+	 * @param  {string}   [options.query]       The query to pass to the query string
+	 * @param  {any}      [options.body]        The body to send in the request or `null`. If `contentType` is `application/vnd.msgpack` or `application/json` it's automatically encoded
+	 * @param  {Object[]} [options.files]       The files to send in a multipart request, keys:
+	 *                                          name, type, value
+	 * @param  {boolean}  [options.throwErrors] Whether to throw errors when the status isn't 2xx
+	 * @param  {string}   [options.contentType] The content type of the body, if present
+	 * @param  {string}   [options.acceptMime]  The expected mime type of the response body
+	 * @param  {Headers}  [options.headers]     Headers to pass to the request
+	 * @param  {string}   [options.credentials] The Request.credentials setting
 	 * @return {Object}
 	 */
 	async req ({
@@ -50,12 +53,14 @@ class Client extends ClientInterface {
 		path,
 		query = {},
 		body = null,
+		files = [],
 		throwErrors = true,
 		contentType = 'application/vnd.msgpack',
 		acceptMime = 'application/vnd.msgpack',
 		headers = new Headers(),
 		credentials = 'omit'
 	} = {}) {
+		if (!query) { query = {}; }
 		const url = this.createURL(path, query);
 
 		headers.append('Accept', acceptMime);
@@ -82,6 +87,26 @@ class Client extends ClientInterface {
 			}
 		}
 
+		if (files.length) {
+			if (fetchOptions.body) {
+				files.unshift({
+					name: 'req',
+					value: Buffer.from(fetchOptions.body),
+					type: fetchOptions.headers.get('Content-Type')
+				});
+			}
+
+			fetchOptions.headers.delete('Content-Type');
+			fetchOptions.body = new FormData();
+			for (let file of files) {
+				fetchOptions.body.append(file.name, file.value, {
+					contentType: file.type,
+					filename: file.name
+				});
+			}
+		}
+
+		console.log(fetchOptions.body);
 		const res = await fetch(url, fetchOptions);
 
 		const resObj = {
