@@ -101,12 +101,11 @@ class Client extends ClientInterface {
 			for (let file of files) {
 				fetchOptions.body.append(file.name, file.value, {
 					contentType: file.type,
-					filename: file.name
+					filename: file.name // this property must be present to tell the server it's a file not a field
 				});
 			}
 		}
 
-		console.log(fetchOptions.body);
 		const res = await fetch(url, fetchOptions);
 
 		const resObj = {
