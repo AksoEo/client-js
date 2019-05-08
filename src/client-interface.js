@@ -2,7 +2,8 @@ import Url from 'url';
 import { Headers } from 'cross-fetch';
 import { base64url } from 'rfc4648';
 import { promisify } from 'util';
-const csvStringify = promisify(require('csv-stringify'));
+import nudeCsvStringify from 'csv-stringify';
+const csvStringify = promisify(nudeCsvStringify);
 
 import { containsBuffer } from './util';
 
@@ -102,6 +103,48 @@ class ClientInterface {
 		}
 
 		return res;
+	}
+
+	/**
+	 * Obtains a collection or resource as csv.
+	 * This method does not account for rate limiting, so care should be taken.
+	 * This method also does not account for memory usage, meaning that ridiculously large collections will inevitably result in a memory issue. To circumvent this, one may set the `limit` option in the `query` object and call this method several times.
+	 * @param  {string} path               The endpoint to request
+	 * @param  {Object} [query]            The query to make
+	 * @param  {Object} [stringifyOptions] Options to pass to csv-stringify, e.g. `header` and `columns`
+	 * @return {string}                    The csv file
+	 */
+	async getCsv (path, query = {}, stringifyOptions = {}) {
+		query = {...query}; // make a copy
+
+		const stringifier = nudeCsvStringify(stringifyOptions);
+		let csvData = [];
+		stringifier.on('readable', () => {
+			let row;
+			while (row = stringifier.read()) { csvData.push(row); }
+		});
+		stringifier.on('error', err => { throw err; });
+		const ready = new Promise(resolve => {
+			stringifier.on('finish', () => resolve());
+		});
+
+		const makeReq = async offset => {
+			if (offset !== null) { query.offset = offset; }
+			const chunkRes = await this.get(path, query);
+			const body = chunkRes.body;
+			if (Array.isArray(body)) {
+				if (!chunkRes.body.length) { return; }
+				chunkRes.body.forEach(row => stringifier.write(row));
+				await makeReq(offset + chunkRes.body.length);
+			} else {
+				stringifier.write(chunkRes.body);
+			}
+		};
+		await makeReq(null);
+
+		stringifier.end();
+		await ready;
+		return csvData.join('');
 	}
 
 	/**
