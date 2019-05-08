@@ -44,7 +44,7 @@ class UserClient extends ClientInterface {
 		const resAuthCheck = await this.restoreSession();
 		if (!resAuthCheck) { throw new Error('GET /auth returns 404 after'); }
 
-		return resAuthCheck.body;
+		return resAuthCheck;
 	}
 
 	/**
@@ -61,7 +61,7 @@ class UserClient extends ClientInterface {
 			this.loggedIn = true;
 			this.totpRequired = resAuthCheck.body.isAdmin || resAuthCheck.body.totpSetUp;
 			this.csrfToken = resAuthCheck.body.csrfToken;
-			return resAuthCheck;
+			return resAuthCheck.body;
 		} catch (err) {
 			if (err.statusCode === 404) { return false; }
 			throw err;
