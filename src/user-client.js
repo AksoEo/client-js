@@ -41,16 +41,31 @@ class UserClient extends ClientInterface {
 			_allowLoggedOut: true
 		});
 
-		const resAuthCheck = await this.req({
-			method: 'GET',
-			path: '/auth',
-			_allowLoggedOut: true
-		});
+		const resAuthCheck = await this.restoreSession();
+		if (!resAuthCheck) { throw new Error('GET /auth returns 404 after'); }
 
-		this.loggedIn = true;
-		this.totpRequired = resAuthCheck.body.isAdmin || resAuthCheck.body.totpSetUp;
-		this.csrfToken = resAuthCheck.body.csrfToken;
 		return resAuthCheck.body;
+	}
+
+	/**
+	 * Restores an existing session
+	 * @return {Object|boolean} False if there's no session to restore, otherwise the response from GET /auth
+	 */
+	async restoreSession () {
+		try {
+			const resAuthCheck = await this.req({
+				method: 'GET',
+				path: '/auth',
+				_allowLoggedOut: true
+			});
+			this.loggedIn = true;
+			this.totpRequired = resAuthCheck.body.isAdmin || resAuthCheck.body.totpSetUp;
+			this.csrfToken = resAuthCheck.body.csrfToken;
+			return resAuthCheck;
+		} catch (err) {
+			if (err.statusCode === 404) { return false; }
+			throw err;
+		}
 	}
 
 	/**
