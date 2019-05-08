@@ -42,7 +42,7 @@ class UserClient extends ClientInterface {
 		});
 
 		const resAuthCheck = await this.restoreSession();
-		if (!resAuthCheck) { throw new Error('GET /auth returns 404 after'); }
+		if (!resAuthCheck) { throw new Error('GET /auth returns 404 after a successful call to PUT /auth'); }
 
 		return resAuthCheck;
 	}
