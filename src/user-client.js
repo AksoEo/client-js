@@ -43,7 +43,8 @@ class UserClient extends ClientInterface {
 
 		const resAuthCheck = await this.req({
 			method: 'GET',
-			path: '/auth'
+			path: '/auth',
+			_allowLoggedOut: true
 		});
 
 		this.loggedIn = true;
