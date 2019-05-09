@@ -198,6 +198,22 @@ class ClientInterface {
 	}
 
 	/**
+	 * Makes a patch request
+	 * @param  {string} path
+	 * @param  {Object} [body]
+	 * @param  {Object} [query]
+	 * @return {Object} The response
+	 */
+	patch (path, body = null, query = {}) {
+		return this.req({
+			method: 'POST',
+			path: path,
+			query: query,
+			body: body
+		});
+	}
+
+	/**
 	 * Refreshes the stored permissions
 	 * @return {Object} The permissions (see `GET /perms``)
 	 */
