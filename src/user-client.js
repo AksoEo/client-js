@@ -81,30 +81,34 @@ class UserClient extends ClientInterface {
 
 	/**
 	 * Sets up totp and logs in using it. The TOTP client must be instructed to set the period to 30 seconds
-	 * @param  {Buffer} secret 20 random bytes used as the TOTP secret
-	 * @param  {string} totp   A 6 character TOTP code
+	 * @param {Buffer}  secret     20 random bytes used as the TOTP secret
+	 * @param {string}  totp       A 6 character TOTP code
+	 * @param {boolean} [remember] Whether to remember this device for 60 days
 	 */
-	async totpSetup (secret, totp) {
+	async totpSetup (secret, totp, remember = false) {
 		await this.req({
 			method: 'POST',
 			path: '/auth/totp',
 			body: {
 				secret: secret,
-				totp: totp
+				totp: totp,
+				remember: remember
 			}
 		});
 	}
 
 	/**
 	 * Logs in using TOTP
-	 * @param  {string} totp A 6 character TOTP code
+	 * @param {string} totp        A 6 character TOTP code
+	 * @param {boolean} [remember] Whether to remember this device for 60 days
 	 */
-	async totpLogIn (totp) {
+	async totpLogIn (totp, remember = false) {
 		await this.req({
 			method: 'POST',
 			path: '/auth/totp',
 			body: {
-				totp: totp
+				totp: totp,
+				remember: remember
 			}
 		});
 	}
