@@ -71,5 +71,5 @@ const querySearchRegex = XRegExp(
 	'x'
 );
 export function isValidSearch (str) {
-	return querySearchRegex.test(str);
+	return str.length <= 250 && querySearchRegex.test(str);
 }
