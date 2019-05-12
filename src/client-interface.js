@@ -128,6 +128,7 @@ class ClientInterface {
 			stringifier.on('finish', () => resolve());
 		});
 
+		let rows = 0;
 		const makeReq = async offset => {
 			if (offset !== null) { query.offset = offset; }
 			const chunkRes = await this.get(path, query);
@@ -135,7 +136,10 @@ class ClientInterface {
 			if (Array.isArray(body)) {
 				if (!chunkRes.body.length) { return; }
 				chunkRes.body.forEach(row => stringifier.write(row));
-				await makeReq(offset + chunkRes.body.length);
+				rows += chunkRes.body.length;
+				if (rows < chunkRes.res.headers.get('x-total-items')) {
+					await makeReq(offset + chunkRes.body.length);
+				}
 			} else {
 				stringifier.write(chunkRes.body);
 			}
