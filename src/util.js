@@ -44,3 +44,29 @@ export function transformSearch (str) {
 
 	return str;
 }
+
+// From API/src/routing/index.js
+const querySearchRegex = XRegExp(
+	`^
+	( [+-]?
+		(
+			  ( "([\\p{L}\\p{N}]{3,} | [\\p{L}\\p{N}]+\\*)
+				 (\\s+([\\p{L}\\p{N}]{3,} | [\\p{L}\\p{N}]+\\*))*" )
+			| ( [\\p{L}\\p{N}]{3,} | [\\p{L}\\p{N}]+\\* )
+		)
+	)
+
+	( \\s+ [+-]?
+		(
+			  ( "([\\p{L}\\p{N}]{3,} | [\\p{L}\\p{N}]+\\*)
+				 (\\s+([\\p{L}\\p{N}]{3,} | [\\p{L}\\p{N}]+\\*))*" )
+			| ( [\\p{L}\\p{N}]{3,} | [\\p{L}\\p{N}]+\\* )
+		)
+	)*
+	$`,
+
+	'x'
+);
+export function isValidSearch (str) {
+	return querySearchRegex.test(str);
+}
