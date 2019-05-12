@@ -280,6 +280,56 @@ class ClientInterface {
 		return (await Promise.all(perms.map(p => this.hasPerm(p))))
 			.reduce((a, b) => a && b);
 	}
+
+	/**
+	 * Returns whether the client has access to a codeholder field
+	 * @param  {string}  field  The field to check for
+	 * @param  {string}  flags  The required flags on the field
+	 * @param  {string}  [prop] @internal The property of this.perms to check for the fields in
+	 * @return {boolean}
+	 */
+	async hasCodeholderField (field, flags, prop = 'memberFields') {
+		const perms = await this.getPerms();
+		const arr = perms[prop];
+		if (arr === null) { return true; }
+		if (!(field in arr)) { return false; }
+		return flags
+			.split('')
+			.map(fl => arr[field].includes(fl))
+			.reduce((a, b) => a && b, true);
+	}
+
+	/**
+	 * Returns whether the client has access to a own codeholder field
+	 * @param  {string}  field  The field to check for
+	 * @param  {string}  flags  The required flags on the field
+	 * @return {boolean}
+	 */
+	hasOwnCodeholderField (field, flags) {
+		return this.hasCodeholderField(field, flags, 'ownMemberFields');
+	}
+
+	/**
+	 * Returns whether the client has access to several codeholder fields
+	 * @param  {string}    flags  The required flags on the field
+	 * @param  {...string} fields The fields to check for
+	 * @return {boolean}
+	 */
+	async hasCodeholderFields (flags, ...fields) {
+		return (await Promise.all(fields.map(f => this.hasCodeholderField(f, flags))))
+			.reduce((a, b) => a && b);
+	}
+
+	/**
+	 * Returns whether the client has access to several own codeholder fields
+	 * @param  {string}    flags  The required flags on the field
+	 * @param  {...string} fields The fields to check for
+	 * @return {boolean}
+	 */
+	async hasOwnCodeholderFields (flags, ...fields) {
+		return (await Promise.all(fields.map(f => this.hasCodeholderField(f, flags, 'ownMemberFields'))))
+			.reduce((a, b) => a && b);
+	}
 }
 
 export default ClientInterface;
