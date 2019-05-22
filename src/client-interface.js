@@ -43,8 +43,12 @@ class ClientInterface {
 	async get (path, query = {}) {
 		const encodedQuery = {};
 		for (let [key, val] of Object.entries(query)) {
+			if (typeof val === 'undefined') { continue; }
+
 			if (key === 'order') {
 				if (Array.isArray(val)) {
+					if (!val.length) { continue; }
+
 					val = val
 						.map(x => Array.isArray(x) ? x.join('.') : x)
 						.join(',');
