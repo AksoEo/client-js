@@ -10,7 +10,7 @@ export function containsBuffer (obj) {
 		return true;
 	}
 	else if (Array.isArray(obj)) {
-		return obj.map(containsBuffer).reduce((a, b) => a || b);
+		return obj.map(containsBuffer).reduce((a, b) => a || b, false);
 	} else if (typeof obj === 'object' && obj !== null) {
 		return Object.values(obj)
 			.map(containsBuffer)
