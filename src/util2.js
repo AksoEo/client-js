@@ -1,3 +1,5 @@
+import msgpack from 'msgpack-lite';
+
 /**
  * Checks recursively whether an object contains a buffer
  * @param  {Object} obj

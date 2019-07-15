@@ -1,5 +1,3 @@
-import msgpack from 'msgpack-lite';
-
 import * as util from './util';
 export { util };
 
@@ -8,5 +6,5 @@ export { default as AppClient } from './app-client';
 export { default as UserClient } from './user-client';
 export { default as UEACode } from './uea-code';
 
-import msgpackCodec from './util2';
+import { msgpackCodec } from './util2';
 export { msgpackCodec };
