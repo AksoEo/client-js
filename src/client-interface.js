@@ -5,7 +5,7 @@ import { promisify } from 'util';
 import nudeCsvStringify from 'csv-stringify';
 const csvStringify = promisify(nudeCsvStringify);
 
-import { containsBuffer } from './util';
+import { containsBuffer } from './util2';
 
 /**
  * A common client interface used by AppClient and UserClient

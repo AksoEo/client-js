@@ -3,7 +3,7 @@ import msgpack from 'msgpack-lite';
 import FormData from 'form-data';
 
 import ClientInterface from './client-interface';
-import { msgpackCodec } from '.';
+import { msgpackCodec } from './util2';
 
 let fetch;
 if (typeof window === 'undefined') { // we only need fetch-cookie on nodejs
