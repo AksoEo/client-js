@@ -214,7 +214,7 @@ class ClientInterface {
 	 */
 	patch (path, body = null, query = {}) {
 		return this.req({
-			method: 'POST',
+			method: 'PATCH',
 			path: path,
 			query: query,
 			body: body
