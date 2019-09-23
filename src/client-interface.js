@@ -28,9 +28,10 @@ class ClientInterface {
 	}
 
 	/**
-	 * Makes a GET request to a collection or resource
-	 * @param  {string}  path        The endpoint to request
-	 * @param  {Object}  [query]     The query to pass to the query string. All keys are passed as is except:
+	 * Encodes the query, handles method overriding, and runs req.
+	 * @param {string} method   The HTTP method.
+	 * @param {string} path     The request endpoint.
+	 * @param {Object} query    The query. All keys are passed as-is except:
 	 *                               `order` will be csv-ified if it's an array:
 	 *                                   [ [ 'id', 'asc' ], 'name.desc' ] -> 'id.asc,name.desc'
 	 *                               `fields` will be csv-ified if it's an array:
@@ -38,9 +39,10 @@ class ClientInterface {
 	 *                               `search` will be csv-ified if it's an object:
 	 *                                   { str: "john smith", cols: [ 'firstName', 'lastName' ] } -> '"john smith",firstName,lastName'
 	 *                               `filter` will be encoded using base64url or make a switch to method overriding as necessary
-	 * @return {Object} The response
+	 * @param {Object} extra    Extra properties in the request, will be passed as-is.
+	 * @return {Object} The response.
 	 */
-	async get (path, query = {}) {
+	async encodeQueryAndReq (method, path, query, extra = {}) {
 		const encodedQuery = {};
 		for (let [key, val] of Object.entries(query)) {
 			if (typeof val === 'undefined') { continue; }
@@ -91,22 +93,37 @@ class ClientInterface {
 		let res;
 		if (!hasBuffer && url.toString().length < 2000) {
 			res = await this.req({
-				method: 'GET',
-				path: path,
-				query: queryForString
+				method,
+				path,
+				query: queryForString,
+				...extra
 			});
 		} else {
+			// can’t have two bodies, so throw an error
+			if ('body' in extra) throw new Error(`${method} does not support URL queries this long`);
 			res = await this.req({
 				method: 'POST',
-				path: path,
+				path,
 				headers: new Headers({
-					'X-Http-Method-Override': 'GET'
+					'X-Http-Method-Override': method
 				}),
+				...extra,
 				body: encodedQuery
 			});
 		}
 
 		return res;
+	}
+
+	/**
+	 * Makes a GET request to a collection or resource
+	 * @param  {string}  path        The endpoint to request
+	 * @param  {Object}  [query]     The query to pass to the query string.
+	 *								 See encodeQuery for more information.
+	 * @return {Object} The response
+	 */
+	get (path, query = {}) {
+		return this.encodeQueryAndReq('GET', path, query);
 	}
 
 	/**
@@ -162,11 +179,7 @@ class ClientInterface {
 	 * @return {Object} The response
 	 */
 	delete (path, query = {}) {
-		return this.req({
-			method: 'DELETE',
-			path: path,
-			query: query
-		});
+		return this.encodeQueryAndReq('DELETE', path, query);
 	}
 
 	/**
@@ -178,13 +191,7 @@ class ClientInterface {
 	 * @return {Object} The response
 	 */
 	post (path, body = null, query = {}, files = []) {
-		return this.req({
-			method: 'POST',
-			path: path,
-			query: query,
-			body: body,
-			files: files
-		});
+		return this.encodeQueryAndReq('POST', path, query, { body, files });
 	}
 
 	/**
@@ -196,13 +203,7 @@ class ClientInterface {
 	 * @return {Object} The response
 	 */
 	put (path, body = null, query = {}, files = []) {
-		return this.req({
-			method: 'PUT',
-			path: path,
-			query: query,
-			body: body,
-			files: files
-		});
+		return this.encodeQueryAndReq('PUT', path, query, { body, files });
 	}
 
 	/**
@@ -213,12 +214,7 @@ class ClientInterface {
 	 * @return {Object} The response
 	 */
 	patch (path, body = null, query = {}) {
-		return this.req({
-			method: 'PATCH',
-			path: path,
-			query: query,
-			body: body
-		});
+		return this.encodeQueryAndReq('PATCH', path, query, { body, files });
 	}
 
 	/**

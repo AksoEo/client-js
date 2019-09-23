@@ -5,8 +5,10 @@ import FormData from 'form-data';
 import ClientInterface from './client-interface';
 import { msgpackCodec } from './util2';
 
+const IS_WEB = typeof window !== 'undefined';
+
 let fetch;
-if (typeof window === 'undefined') { // we only need fetch-cookie on nodejs
+if (!IS_WEB) { // we only need fetch-cookie on nodejs
 	fetch = require('fetch-cookie')(crossFetch);
 } else {
 	fetch = crossFetch;
@@ -89,9 +91,12 @@ class Client extends ClientInterface {
 
 		if (files.length) {
 			if (fetchOptions.body) {
+				let value = Buffer.from(fetchOptions.body);
+				// on the web, FormData expects blobs and not array buffers
+				if (IS_WEB) value = new global.Blob(value);
 				files.unshift({
 					name: 'req',
-					value: Buffer.from(fetchOptions.body),
+					value,
 					type: fetchOptions.headers.get('Content-Type')
 				});
 			}
