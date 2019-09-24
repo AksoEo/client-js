@@ -214,7 +214,7 @@ class ClientInterface {
 	 * @return {Object} The response
 	 */
 	patch (path, body = null, query = {}) {
-		return this.encodeQueryAndReq('PATCH', path, query, { body, files });
+		return this.encodeQueryAndReq('PATCH', path, query, { body });
 	}
 
 	/**
