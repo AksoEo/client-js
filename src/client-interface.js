@@ -258,12 +258,14 @@ class ClientInterface {
 	}
 
 	/**
-	 * Checks whether the client has a certain permission
+	 * Checks whether the client has a certain permission.
+	 * Returns null if permissions haven’t been loaded yet.
+	 *
 	 * @param  {string}  perm The permission to check
-	 * @return {boolean}
+	 * @return {boolean|null}
 	 */
-	async hasPerm (perm) {
-		if (!this.permsTree) { await this.refreshPerms(); }
+	hasPermSync (perm) {
+		if (!this.permsTree) return null;
 
 		let path = this.permsTree;
 		const bits = perm.split('.');
@@ -273,6 +275,16 @@ class ClientInterface {
 			path = path[bit];
 		}
 		return true;
+	}
+
+	/**
+	 * Checks whether the client has a certain permission
+	 * @param  {string}  perm The permission to check
+	 * @return {boolean}
+	 */
+	async hasPerm (perm) {
+		if (!this.permsTree) { await this.refreshPerms(); }
+		return this.hasPermSync(perm);
 	}
 
 	/**
