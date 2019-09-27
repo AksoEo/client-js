@@ -6,19 +6,19 @@ import msgpack from 'msgpack-lite';
  * @return {boolean}
  */
 export function containsBuffer (obj) {
-    if (obj instanceof Buffer) {
-        return true;
-    }
-    else if (Array.isArray(obj)) {
-        return obj.map(containsBuffer).reduce((a, b) => a || b, false);
-    } else if (typeof obj === 'object' && obj !== null) {
-        return Object.values(obj)
-            .map(containsBuffer)
-            .reduce((a, b) => a || b, false);
-    }
-    return false;
+	if (obj instanceof Buffer) {
+		return true;
+	}
+	else if (Array.isArray(obj)) {
+		return obj.map(containsBuffer).reduce((a, b) => a || b, false);
+	} else if (typeof obj === 'object' && obj !== null) {
+		return Object.values(obj)
+			.map(containsBuffer)
+			.reduce((a, b) => a || b, false);
+	}
+	return false;
 }
 
 export const msgpackCodec = msgpack.createCodec({
-    int64: true
+	int64: true
 });
