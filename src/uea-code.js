@@ -45,7 +45,7 @@ class UEACode {
 			throw err;
 		}
 
-		if (code.length === 4) {
+		if (code.length === 4 || code.includes('-')) {
 			this.type = 'old';
 
 			const oldCode = oldCodeRegex.exec(code);
