@@ -154,6 +154,9 @@ class Client extends ClientInterface {
 				msg += `: "${resObj.body}"`;
 			}
 			msg += ')';
+			if (resContentType.includes('application/vnd.msgpack') || resContentType.includes('application/json')) {
+				msg += '\n' + JSON.stringify(resObj.body, undefined, 4);
+			}
 			const error = new Error(msg);
 			error.statusCode = res.status;
 			error.response = res;
