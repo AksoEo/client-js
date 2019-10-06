@@ -8,3 +8,5 @@ export { default as UEACode } from './uea-code';
 
 import { msgpackCodec } from './util2';
 export { msgpackCodec };
+
+export { generateTotp } from './totp-utils';

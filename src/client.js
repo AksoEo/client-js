@@ -5,12 +5,18 @@ import FormData from 'form-data';
 import ClientInterface from './client-interface';
 import { msgpackCodec } from './util2';
 
+import pkg from '../package.json';
+
+/* eslint-disable no-undef */
 const IS_WEB = typeof window !== 'undefined' // document
 	|| (typeof WorkerGlobalScope !== 'undefined' && global instanceof WorkerGlobalScope); // worker
+/* eslint-enable no-undef */
 
 let fetch;
 if (!IS_WEB) { // we only need fetch-cookie on nodejs
-	fetch = require('fetch-cookie')(crossFetch);
+	// obscure require so webpack doesn‘t catch on
+	const obscureRequire = (m, r) => m.require(r);
+	fetch = obscureRequire(module, 'fetch-cookie')(crossFetch);
 } else {
 	fetch = crossFetch;
 }
@@ -26,7 +32,7 @@ class Client extends ClientInterface {
 	 */
 	constructor ({
 		host = 'http://localhost:1111',
-		userAgent = `AKSOClientJS/${require('../package.json').version} (+https://github.com/AksoEo/client-js)`
+		userAgent = `AKSOClientJS/${pkg.version} (+https://github.com/AksoEo/client-js)`
 	} = {}) {
 		super();
 

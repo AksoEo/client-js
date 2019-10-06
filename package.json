@@ -1,12 +1,15 @@
 {
-  "name": "akso-client",
-  "version": "0.1.5",
+  "name": "@tejo/akso-client",
+  "version": "0.1.6",
   "description": "A JavaScript client for AKSO",
   "main": "dist/index.js",
+  "module": "dist-esm/index.js",
+  "sideEffects": false,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "./node_modules/.bin/gulp compile-src",
-    "preinstall": "npm install --ignore-scripts && npm run build"
+    "build": "gulp compile",
+    "lint": "eslint src",
+    "prep": "npm run lint && npm run build"
   },
   "repository": {
     "type": "git",
@@ -22,20 +25,20 @@
   },
   "homepage": "https://github.com/aksoeo/client-js#readme",
   "devDependencies": {
-    "@babel/core": "^7.4.4",
-    "@babel/plugin-proposal-export-namespace-from": "^7.2.0",
-    "@babel/plugin-transform-async-to-generator": "^7.4.4",
-    "@babel/polyfill": "^7.4.4",
-    "@babel/preset-env": "^7.4.4",
+    "@babel/core": "^7.6.2",
+    "@babel/plugin-proposal-export-namespace-from": "^7.5.2",
+    "@babel/plugin-transform-async-to-generator": "^7.5.0",
+    "@babel/preset-env": "^7.6.2",
     "eslint": "^5.16.0",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
-    "gulp-header": "^2.0.7",
+    "gulp-header": "^2.0.9",
     "gulp-plumber": "^1.2.1",
     "gulp-sourcemaps": "^2.6.5",
     "gulp-watch": "^5.0.1"
   },
   "dependencies": {
+    "core-js": "^3.2.1",
     "cross-fetch": "^3.0.2",
     "csv-stringify": "^5.3.0",
     "fetch-cookie": "^0.7.2",

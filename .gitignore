@@ -62,4 +62,5 @@ typings/
 
 
 dist/
+dist-esm/
 src/_test.js
