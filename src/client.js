@@ -5,7 +5,8 @@ import FormData from 'form-data';
 import ClientInterface from './client-interface';
 import { msgpackCodec } from './util2';
 
-const IS_WEB = typeof window !== 'undefined';
+const IS_WEB = typeof window !== 'undefined' // document
+	|| (typeof WorkerGlobalScope !== 'undefined' && global instanceof WorkerGlobalScope); // worker
 
 let fetch;
 if (!IS_WEB) { // we only need fetch-cookie on nodejs
@@ -67,7 +68,7 @@ class Client extends ClientInterface {
 
 		headers.append('Accept', acceptMime);
 
-		if (typeof window === 'undefined') { // Only if running on node.js
+		if (!IS_WEB) { // Only if running on node.js
 			headers.set('User-Agent', this.userAgent);
 		}
 
