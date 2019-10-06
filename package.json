@@ -1,6 +1,6 @@
 {
   "name": "@tejo/akso-client",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "A JavaScript client for AKSO",
   "main": "dist/index.js",
   "module": "dist-esm/index.js",
@@ -24,6 +24,10 @@
     "url": "https://github.com/aksoeo/client-js/issues"
   },
   "homepage": "https://github.com/aksoeo/client-js#readme",
+  "files": [
+    "dist",
+    "dist-esm"
+  ],
   "devDependencies": {
     "@babel/core": "^7.6.2",
     "@babel/plugin-proposal-export-namespace-from": "^7.5.2",
