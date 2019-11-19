@@ -99,19 +99,21 @@ class Client extends ClientInterface {
 		if (files.length) {
 			if (fetchOptions.body) {
 				let value = Buffer.from(fetchOptions.body);
+				const type = fetchOptions.headers.get('Content-Type');
 				// on the web, FormData expects blobs and not array buffers
-				if (IS_WEB) value = new global.Blob(value);
+				if (IS_WEB) value = new global.Blob(value, { type });
 				files.unshift({
 					name: 'req',
 					value,
-					type: fetchOptions.headers.get('Content-Type')
+					type
 				});
 			}
 
 			fetchOptions.headers.delete('Content-Type');
 			fetchOptions.body = new FormData();
 			for (let file of files) {
-				fetchOptions.body.append(file.name, file.value, {
+				// on the web, the third parameter is the filename property, not options
+				fetchOptions.body.append(file.name, file.value, IS_WEB ? file.name : {
 					contentType: file.type,
 					filename: file.name // this property must be present to tell the server it's a file not a field
 				});
