@@ -101,7 +101,7 @@ class Client extends ClientInterface {
 				let value = Buffer.from(fetchOptions.body);
 				const type = fetchOptions.headers.get('Content-Type');
 				// on the web, FormData expects blobs and not array buffers
-				if (IS_WEB) value = new global.Blob(value, { type });
+				if (IS_WEB) value = new global.Blob([value], { type });
 				files.unshift({
 					name: 'req',
 					value,
