@@ -116,7 +116,7 @@ export default class Perms {
 	 */
 	hasCodeholderFields (flags, ...fields) {
 		return fields.map(f => this.hasCodeholderField(f, flags))
-			.reduce((a, b) => a === null ? null : a && b, false);
+			.reduce((a, b) => a === null ? null : a && b, true);
 	}
 
 	/**
@@ -129,6 +129,6 @@ export default class Perms {
 	 */
 	hasOwnCodeholderFields (flags, ...fields) {
 		return fields.map(f => this.hasCodeholderField(f, flags, 'ownMemberFields'))
-			.reduce((a, b) => a === null ? null : a && b, false);
+			.reduce((a, b) => a === null ? null : a && b, true);
 	}
 }
