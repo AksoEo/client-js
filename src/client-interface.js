@@ -6,11 +6,16 @@ import nudeCsvStringify from 'csv-stringify';
 const csvStringify = promisify(nudeCsvStringify);
 
 import { containsBuffer } from './util2';
+import Perms from './perms';
 
 /**
  * A common client interface used by AppClient and UserClient
  */
 class ClientInterface {
+	constructor () {
+		this.perms = new Perms();
+	}
+
 	req () {} // Must be implemented by class
 
 	/**
@@ -226,26 +231,9 @@ class ClientInterface {
 			method: 'GET',
 			path: '/perms'
 		});
-		this.perms = res.body;
+		this.perms.load(res.body);
 
-		this.permsTree = {};
-		for (let perm of this.perms.permissions) {
-			let path = this.permsTree;
-			const bits = perm.split('.');
-			for (let i = 0; i < bits.length; i++) {
-				const bit = bits[i];
-				const isLast = i+1 === bits.length;
-
-				if (isLast) {
-					path[bit] = true;
-				} else {
-					if (!(bit in path)) { path[bit] = {}; }
-					path = path[bit];
-				}
-			}
-		}
-
-		return this.perms;
+		return this.perms.perms;
 	}
 
 	/**
@@ -254,7 +242,7 @@ class ClientInterface {
 	 */
 	async getPerms () {
 		if (!this.perms) { await this.refreshPerms(); }
-		return this.perms;
+		return this.perms.perms;
 	}
 
 	/**
@@ -265,16 +253,7 @@ class ClientInterface {
 	 * @return {boolean|null}
 	 */
 	hasPermSync (perm) {
-		if (!this.permsTree) return null;
-
-		let path = this.permsTree;
-		const bits = perm.split('.');
-		for (let bit of bits) {
-			if ('*' in path) { return true; }
-			if (!(bit in path)) { return false; }
-			path = path[bit];
-		}
-		return true;
+		return this.perms.hasPerm(perm);
 	}
 
 	/**
@@ -283,8 +262,8 @@ class ClientInterface {
 	 * @return {boolean}
 	 */
 	async hasPerm (perm) {
-		if (!this.permsTree) { await this.refreshPerms(); }
-		return this.hasPermSync(perm);
+		if (!this.perms.loaded) { await this.refreshPerms(); }
+		return this.perms.hasPerm(perm);
 	}
 
 	/**
@@ -293,26 +272,19 @@ class ClientInterface {
 	 * @return {boolean}
 	 */
 	async hasPerms (...perms) {
-		return (await Promise.all(perms.map(p => this.hasPerm(p))))
-			.reduce((a, b) => a && b);
+		if (!this.perms.loaded) { await this.refreshPerms(); }
+		return this.perms.hasPerms(...perms);
 	}
 
 	/**
 	 * Returns whether the client has access to a codeholder field
 	 * @param  {string}  field  The field to check for
 	 * @param  {string}  flags  The required flags on the field
-	 * @param  {string}  [prop] @internal The property of this.perms to check for the fields in
 	 * @return {boolean}
 	 */
-	async hasCodeholderField (field, flags, prop = 'memberFields') {
-		const perms = await this.getPerms();
-		const arr = perms[prop];
-		if (arr === null) { return true; }
-		if (!(field in arr)) { return false; }
-		return flags
-			.split('')
-			.map(fl => arr[field].includes(fl))
-			.reduce((a, b) => a && b, true);
+	async hasCodeholderField (field, flags) {
+		if (!this.perms.loaded) { await this.refreshPerms(); }
+		return this.perms.hasCodeholderField(field, flags);
 	}
 
 	/**
@@ -321,8 +293,9 @@ class ClientInterface {
 	 * @param  {string}  flags  The required flags on the field
 	 * @return {boolean}
 	 */
-	hasOwnCodeholderField (field, flags) {
-		return this.hasCodeholderField(field, flags, 'ownMemberFields');
+	async hasOwnCodeholderField (field, flags) {
+		if (!this.perms.loaded) { await this.refreshPerms(); }
+		return this.perms.hasOwnCodeholderField(field, flags);
 	}
 
 	/**
@@ -332,8 +305,8 @@ class ClientInterface {
 	 * @return {boolean}
 	 */
 	async hasCodeholderFields (flags, ...fields) {
-		return (await Promise.all(fields.map(f => this.hasCodeholderField(f, flags))))
-			.reduce((a, b) => a && b);
+		if (!this.perms.loaded) { await this.refreshPerms(); }
+		return this.perms.hasCodeholderFields(flags, ...fields);
 	}
 
 	/**
@@ -343,8 +316,8 @@ class ClientInterface {
 	 * @return {boolean}
 	 */
 	async hasOwnCodeholderFields (flags, ...fields) {
-		return (await Promise.all(fields.map(f => this.hasCodeholderField(f, flags, 'ownMemberFields'))))
-			.reduce((a, b) => a && b);
+		if (!this.perms.loaded) { await this.refreshPerms(); }
+		return this.perms.hasOwnCodeholderFields(flags, ...fields);
 	}
 }
 
