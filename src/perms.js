@@ -84,6 +84,7 @@ export default class Perms {
 	 * @return {boolean|null}
 	 */
 	hasCodeholderField (field, flags, prop = 'memberFields') {
+		if (field === 'id') return true;
 		const { perms } = this;
 		const arr = perms[prop];
 		if (arr === null) { return true; }
