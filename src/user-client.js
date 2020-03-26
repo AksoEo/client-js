@@ -9,15 +9,21 @@ import Client from './client';
 class UserClient extends ClientInterface {
 	/**
 	 * @param {Object} options
-	 * @param {Object} [options.host] The host address of the AKSO API
+	 * @param {Object}    [options.host] The host address of the AKSO API
+	 * @param {string}    [options.userAgent] The user agent string (ignored in the browser)
+	 * @param {CookieJar} [options.cookieJar] A cookie jar for fetch-cookie (ignored in the browser)
 	 */
 	constructor ({
-		host
+		host,
+		userAgent,
+		cookieJar
 	} = {}) {
 		super();
 
 		this.client = new Client({
-			host: host
+			host,
+			userAgent,
+			cookieJar
 		});
 		this.loggedIn = false;
 		this.totpRequired = null;
@@ -131,7 +137,7 @@ class UserClient extends ClientInterface {
 		if (!this.loggedIn && !options._allowLoggedOut) { throw new Error('Call UserClient#logIn to log in first'); }
 
 		options.credentials = 'include';
-		
+
 		if (!options.headers) { options.headers = new Headers(); }
 		if (this.loggedIn) {
 			options.headers.set('X-CSRF-Token', this.csrfToken);

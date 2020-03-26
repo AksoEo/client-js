@@ -12,13 +12,14 @@ const IS_WEB = typeof window !== 'undefined' // document
 	|| (typeof WorkerGlobalScope !== 'undefined' && global instanceof WorkerGlobalScope); // worker
 /* eslint-enable no-undef */
 
-let fetch;
+let makeFetch;
 if (!IS_WEB) { // we only need fetch-cookie on nodejs
 	// obscure require so webpack doesn‘t catch on
 	const obscureRequire = (m, r) => m.require(r);
-	fetch = obscureRequire(module, 'fetch-cookie')(crossFetch);
+	const fetchCookie = obscureRequire(module, 'fetch-cookie');
+	makeFetch = cookieJar => fetchCookie(crossFetch, cookieJar);
 } else {
-	fetch = crossFetch;
+	makeFetch = () => crossFetch;
 }
 
 /**
@@ -27,17 +28,20 @@ if (!IS_WEB) { // we only need fetch-cookie on nodejs
 class Client extends ClientInterface {
 	/**
 	 * @param {Object} options
-	 * @param {Object} [options.host]      The host address of the AKSO API
-	 * @param {string} [options.userAgent] The user agent string (ignored in the browser)
+	 * @param {Object}    [options.host]      The host address of the AKSO API
+	 * @param {string}    [options.userAgent] The user agent string (ignored in the browser)
+	 * @param {CookieJar} [options.cookieJar] A cookie jar for fetch-cookie (ignored in the browser)
 	 */
 	constructor ({
 		host = 'http://localhost:1111',
-		userAgent = `AKSOClientJS/${pkg.version} (+https://github.com/AksoEo/client-js)`
+		userAgent = `AKSOClientJS/${pkg.version} (+https://github.com/AksoEo/client-js)`,
+		cookieJar = undefined
 	} = {}) {
 		super();
 
 		this.host = host;
 		this.userAgent = userAgent;
+		this.fetch = makeFetch(cookieJar);
 	}
 
 	/**
@@ -120,7 +124,7 @@ class Client extends ClientInterface {
 			}
 		}
 
-		const res = await fetch(url, fetchOptions);
+		const res = await this.fetch(url, fetchOptions);
 
 		const resObj = {
 			res: res,

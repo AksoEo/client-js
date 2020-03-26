@@ -8,25 +8,28 @@ import Client from './client';
  */
 class AppClient extends ClientInterface {
 	/**
-	 * @param {Object} options
-	 * @param {string} options.apiKey      The hex encoded api key
-	 * @param {string} options.apiSecret   The hex encoded api secret
-	 * @param {Object} [options.host]	   The host address of the AKSO API
-	 * @param {string} [options.userAgent] The user agent string (ignored in the browser)
+	 * @param {Object}    options
+	 * @param {string}    options.apiKey      The hex encoded api key
+	 * @param {string}    options.apiSecret   The hex encoded api secret
+	 * @param {Object}    [options.host]	   The host address of the AKSO API
+	 * @param {string}    [options.userAgent] The user agent string (ignored in the browser)
+	 * @param {CookieJar} [options.cookieJar] A cookie jar for fetch-cookie (ignored in the browser)
 	 */
 	constructor ({
 		apiKey,
 		apiSecret,
 		host,
-		userAgent
+		userAgent,
+		cookieJar
 	} = {}) {
 		super();
 
 		this.apiKey = apiKey;
 		this.apiSecret = apiSecret;
 		this.client = new Client({
-			host: host,
-			userAgent: userAgent
+			host,
+			userAgent,
+			cookieJar
 		});
 	}
 
