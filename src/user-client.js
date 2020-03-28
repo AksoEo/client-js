@@ -12,18 +12,21 @@ class UserClient extends ClientInterface {
 	 * @param {Object}    [options.host] The host address of the AKSO API
 	 * @param {string}    [options.userAgent] The user agent string (ignored in the browser)
 	 * @param {CookieJar} [options.cookieJar] A cookie jar for fetch-cookie (ignored in the browser)
+	 * @param {Object}    [options.headers]   Additional headers to add to every request
 	 */
 	constructor ({
 		host,
 		userAgent,
-		cookieJar
+		cookieJar,
+		headers
 	} = {}) {
 		super();
 
 		this.client = new Client({
 			host,
 			userAgent,
-			cookieJar
+			cookieJar,
+			headers
 		});
 		this.loggedIn = false;
 		this.totpRequired = null;

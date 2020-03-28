@@ -31,17 +31,20 @@ class Client extends ClientInterface {
 	 * @param {Object}    [options.host]      The host address of the AKSO API
 	 * @param {string}    [options.userAgent] The user agent string (ignored in the browser)
 	 * @param {CookieJar} [options.cookieJar] A cookie jar for fetch-cookie (ignored in the browser)
+	 * @param {Object}    [options.headers]   Additional headers to add to every request
 	 */
 	constructor ({
 		host = 'http://localhost:1111',
 		userAgent = `AKSOClientJS/${pkg.version} (+https://github.com/AksoEo/client-js)`,
-		cookieJar = undefined
+		cookieJar = undefined,
+		headers = {}
 	} = {}) {
 		super();
 
 		this.host = host;
 		this.userAgent = userAgent;
 		this.fetch = makeFetch(cookieJar);
+		this.additionalHeaders = headers;
 	}
 
 	/**
@@ -77,6 +80,10 @@ class Client extends ClientInterface {
 		const url = this.createURL(path, query);
 
 		headers.append('Accept', acceptMime);
+
+		for (const headerName in this.additionalHeaders) {
+			headers.set(headerName, this.additionalHeaders[headerName]);
+		}
 
 		if (!IS_WEB) { // Only if running on node.js
 			headers.set('User-Agent', this.userAgent);
