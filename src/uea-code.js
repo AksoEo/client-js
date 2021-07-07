@@ -1,3 +1,5 @@
+import bannedCodes from './banned-codes';
+
 const oldCodeRegex = /^([a-z]{4})(?:-([a-z]))?$/;
 const newCodeRegex = /^[a-z]{6}$/;
 
@@ -242,8 +244,10 @@ class UEACode {
 					codes.add(baseCode.padEnd(6, baseCode.slice(-1)));
 					// last char of name
 					codes.add(baseCode.padEnd(6, l.slice(-1)));
-					// x
+					// x, y, z
 					codes.add(baseCode.padEnd(6, 'x'));
+					codes.add(baseCode.padEnd(6, 'y'));
+					codes.add(baseCode.padEnd(6, 'z'));
 				}
 			}
 
@@ -283,9 +287,21 @@ class UEACode {
 			}
 
 			// TODO: Alg step 2
-
-			codes = [...codes];
 		}
+
+		// Convert set to array
+		codes = [...codes];
+
+		// Remove banned codes
+		codes = codes
+			.filter(code => {
+				for (const bannedCode of bannedCodes) {
+					if (code.includes(bannedCode)) {
+						return false;
+					}
+				}
+				return true;
+			});
 
 		return codes;
 	}
