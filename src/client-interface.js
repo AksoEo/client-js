@@ -5,7 +5,7 @@ import { promisify } from 'util';
 import nudeCsvStringify from 'csv-stringify';
 const csvStringify = promisify(nudeCsvStringify);
 
-import { containsBuffer } from './util2';
+import { byteArraysToBuffers, containsBuffer } from './util2';
 import Perms from './perms';
 
 /**
@@ -75,7 +75,8 @@ class ClientInterface {
 
 			}
 
-			encodedQuery[key] = val;
+			// msgpack does not support byte arrays (like Uint8Array), so we have to convert them first.
+			encodedQuery[key] = byteArraysToBuffers(val);
 		}
 
 		// Perform method override if the url exceeds 2k characters or if it contains a buffer somewhere
@@ -84,7 +85,7 @@ class ClientInterface {
 		if (!hasBuffer) {
 			for (let [key, val] of Object.entries(encodedQuery)) {
 				if (typeof val === 'object' && val !== null) {
-					val = JSON.stringify(val); // todo: handle buffers
+					val = JSON.stringify(val);
 				}
 
 				if (key === 'filter') {
