@@ -2,8 +2,6 @@ import Url from 'url';
 import { Headers } from 'cross-fetch';
 import { base64url } from 'rfc4648';
 import { promisify } from 'util';
-import nudeCsvStringify from 'csv-stringify';
-const csvStringify = promisify(nudeCsvStringify);
 
 import { byteArraysToBuffers, containsBuffer } from './util2';
 import Perms from './perms';
@@ -19,13 +17,17 @@ class ClientInterface {
 	req () {} // Must be implemented by class
 
 	/**
-	 * @internal Generates a URL for a query
+	 * @internal Generates a URL for a query.
+	 *
+	 * Note that even absolute paths with a leading / will be resolved relative to the host URL.
+	 *
 	 * @param  {string} path  The path
 	 * @param  {string} query The query string
 	 * @return {URL}
 	 */
 	createURL (path, query) {
 		const url = new URL(this.host);
+		if (path.startsWith('/')) path = path.substr(1); // ignore leading / to force relative paths
 		url.pathname = Url.resolve(url.pathname, path);
 		url.search = new URLSearchParams(query);
 
@@ -68,7 +70,12 @@ class ClientInterface {
 
 			} else if (key === 'search') {
 				if (typeof val === 'object' && val !== null && !Array.isArray(val) && 'str' in val && 'cols' in val) {
-					const search = (await csvStringify([[val.str]])).slice(0, -1);
+					// we need to escape the search string like a CSV field
+					let search = (val.str || '').toString();
+					if (search.match(/[,\r\n"]/)) {
+						// contains characters that must be escaped
+						search = '"' + search.replace(/\"/g, '""') + '"';
+					}
 					const cols = val.cols;
 					val = [ search, ...cols ].join(',');
 				}
@@ -130,52 +137,6 @@ class ClientInterface {
 	 */
 	get (path, query = {}) {
 		return this.encodeQueryAndReq('GET', path, query);
-	}
-
-	/**
-	 * Obtains a collection or resource as csv.
-	 * This method does not account for rate limiting, so care should be taken.
-	 * This method also does not account for memory usage, meaning that ridiculously large collections will inevitably result in a memory issue. To circumvent this, one may set the `limit` option in the `query` object and call this method several times.
-	 * @param  {string} path               The endpoint to request
-	 * @param  {Object} [query]            The query to make
-	 * @param  {Object} [stringifyOptions] Options to pass to csv-stringify, e.g. `header` and `columns`
-	 * @return {string}                    The csv file
-	 */
-	async getCsv (path, query = {}, stringifyOptions = {}) {
-		query = {...query}; // make a copy
-
-		const stringifier = nudeCsvStringify(stringifyOptions);
-		let csvData = [];
-		stringifier.on('readable', () => {
-			let row;
-			while (row = stringifier.read()) { csvData.push(row); }
-		});
-		stringifier.on('error', err => { throw err; });
-		const ready = new Promise(resolve => {
-			stringifier.on('finish', () => resolve());
-		});
-
-		let rows = 0;
-		const makeReq = async offset => {
-			if (offset !== null) { query.offset = offset; }
-			const chunkRes = await this.get(path, query);
-			const body = chunkRes.body;
-			if (Array.isArray(body)) {
-				if (!chunkRes.body.length) { return; }
-				chunkRes.body.forEach(row => stringifier.write(row));
-				rows += chunkRes.body.length;
-				if (rows < chunkRes.res.headers.get('x-total-items')) {
-					await makeReq(offset + chunkRes.body.length);
-				}
-			} else {
-				stringifier.write(chunkRes.body);
-			}
-		};
-		await makeReq(null);
-
-		stringifier.end();
-		await ready;
-		return csvData.join('');
 	}
 
 	/**
