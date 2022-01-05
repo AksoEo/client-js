@@ -1,7 +1,6 @@
 import Url from 'url';
 import { Headers } from 'cross-fetch';
 import { base64url } from 'rfc4648';
-import { promisify } from 'util';
 
 import { byteArraysToBuffers, containsBuffer } from './util2';
 import Perms from './perms';

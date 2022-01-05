@@ -180,6 +180,7 @@ class Client extends ClientInterface {
 			const error = new Error(msg);
 			error.statusCode = res.status;
 			error.response = res;
+			error.resObj = resObj;
 			throw error;
 		}
 
