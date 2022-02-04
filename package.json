@@ -7,7 +7,7 @@
   "sideEffects": false,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "gulp compile",
+    "build": "./node_modules/.bin/gulp compile",
     "lint": "eslint src",
     "prep": "npm run lint && npm run build"
   },
@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "core-js": "^3.19.1",
-    "cross-fetch": "^3.1.4",
+    "cross-fetch": "^3.1.5",
     "fetch-cookie": "^0.7.3",
     "form-data": "^2.5.1",
     "msgpack-lite": "^0.1.26",
