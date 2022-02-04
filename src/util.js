@@ -1,5 +1,26 @@
 import XRegExp from 'xregexp';
 
+// From API/src/routing/index.js
+const querySearchWord = '[\\p{L}\\p{N}]';
+const querySearchToken = `((\\s*${querySearchWord}{3,}\\s*) | (\\s*${querySearchWord}{2,}\\*\\s*))`;
+const querySearchSubRegex =
+	`(
+		( "${querySearchToken}(\\s+${querySearchToken})*" ) |
+		( ${querySearchToken} )
+	)`;
+const querySearchRegex = XRegExp(
+	`^
+	( [+-]? ${querySearchSubRegex} )
+	( \\s+ [+-]? ${querySearchSubRegex} )*
+	$`,
+
+	'x'
+);
+
+export function isValidSearch (str) {
+	return str.length <= 250 && querySearchRegex.test(str);
+}
+
 const bannedSearchChars = new XRegExp('[^\\p{L}\\p{N}\\s*+\\-"]', 'g');
 const searchWordChars = new XRegExp('([\\p{L}\\p{N}]+)', 'g');
 const searchOperators = /[*+\-"]/;
@@ -7,7 +28,7 @@ const searchWordsTooShort = new XRegExp(
 	`
 	(^|[^\\p{L}\\p{N}]) # Ensure it's the beginning of a word
 
-	([\\p{L}\\p{N}]{1,2})(?!\\*) # Match any word shorter than three chars that doesn't have a wildcard at the end
+	([\\p{L}\\p{N}]{2})(?!\\*) # Match any two-letter word that doesn't have a wildcard at the end
 
 	(?=$|[^\\p{L}\\p{N}]) # Ensure it's the end of a word
 	`,
@@ -32,33 +53,4 @@ export function transformSearch (str) {
 	}
 
 	return str;
-}
-
-// From API/src/routing/index.js
-const querySearchWord = '[\\p{L}\\p{N}]';
-const querySearchRegex = XRegExp(
-	`^
-	( [+-]?
-		(
-			  ( "(${querySearchWord}{3,}      | ${querySearchWord}+\\*)
-				 (\\s+(${querySearchWord}{3,} | ${querySearchWord}+\\*))*" )
-
-			| ( ${querySearchWord}{3,}        | ${querySearchWord}+\\*)
-		)
-	)
-
-	( \\s+ [+-]?
-		(
-			  ( "(${querySearchWord}{3,}      | ${querySearchWord}+\\*)
-				 (\\s+(${querySearchWord}{3,} | ${querySearchWord}+\\*))*" )
-
-			| ( ${querySearchWord}{3,}        | ${querySearchWord}+\\*)
-		)
-	)*
-	$`,
-
-	'x'
-);
-export function isValidSearch (str) {
-	return str.length <= 250 && querySearchRegex.test(str);
 }
