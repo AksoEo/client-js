@@ -17,7 +17,7 @@ const compileSrc = function (source, isBrowserBuild) {
 		.pipe(sourcemaps.init())
 		.pipe(babel({
 				presets: [
-					["@babel/env", {
+					["@babel/preset-env", {
 						modules: isBrowserBuild ? false : undefined,
 	                    useBuiltIns: 'usage',
 	                    corejs: pkg.dependencies['core-js']
