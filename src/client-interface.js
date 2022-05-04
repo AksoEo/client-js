@@ -73,7 +73,7 @@ class ClientInterface {
 					let search = (val.str || '').toString();
 					if (search.match(/[,\r\n"]/)) {
 						// contains characters that must be escaped
-						search = '"' + search.replace(/\"/g, '""') + '"';
+						search = '"' + search.replace(/"/g, '""') + '"';
 					}
 					const cols = val.cols;
 					val = [ search, ...cols ].join(',');
