@@ -1,7 +1,7 @@
 import { Headers } from 'cross-fetch';
 
-import ClientInterface from './client-interface';
-import Client from './client';
+import ClientInterface from './client-interface.js';
+import Client from './client.js';
 
 /**
  * A client using app authentication to communicate with the AKSO API

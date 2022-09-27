@@ -2,12 +2,12 @@
   "name": "@tejo/akso-client",
   "version": "0.4.6",
   "description": "A JavaScript client for AKSO",
-  "main": "dist/index.js",
-  "module": "dist-esm/index.js",
+  "main": "src/index.js",
+  "module": "src/index.js",
+  "type": "module",
   "sideEffects": false,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "./node_modules/.bin/gulp compile",
     "lint": "eslint src",
     "prep": "npm run lint && npm run build"
   },

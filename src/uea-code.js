@@ -1,4 +1,4 @@
-import bannedCodes from './banned-codes';
+import bannedCodes from './banned-codes.js';
 
 const oldCodeRegex = /^([a-z]{4})(?:-([a-z]))?$/;
 const newCodeRegex = /^[a-z]{6}$/;

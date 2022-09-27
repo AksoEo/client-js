@@ -2,8 +2,8 @@ import Url from 'url';
 import { Headers } from 'cross-fetch';
 import { base64url } from 'rfc4648';
 
-import { byteArraysToBuffers, containsBuffer } from './util2';
-import Perms from './perms';
+import { byteArraysToBuffers, containsBuffer } from './util2.js';
+import Perms from './perms.js';
 
 /**
  * A common client interface used by AppClient and UserClient

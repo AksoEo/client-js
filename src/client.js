@@ -1,11 +1,14 @@
 import crossFetch, { Headers } from 'cross-fetch';
 import msgpack from 'msgpack-lite';
-import { FormData } from 'formdata-node';
+import { FormData, Blob } from 'formdata-node';
+import { createRequire } from 'module';
 
-import ClientInterface from './client-interface';
-import { msgpackCodec } from './util2';
+import ClientInterface from './client-interface.js';
+import { msgpackCodec } from './util2.js';
 
-import pkg from '../package.json';
+const _require = createRequire(import.meta.url);
+
+const pkg = _require('../package.json');
 
 /* eslint-disable no-undef */
 const IS_WEB = typeof window !== 'undefined' // document
@@ -14,9 +17,7 @@ const IS_WEB = typeof window !== 'undefined' // document
 
 let makeFetch;
 if (!IS_WEB) { // we only need fetch-cookie on nodejs
-	// obscure require so webpack doesn‘t catch on
-	const obscureRequire = (m, r) => m.require(r);
-	const fetchCookie = obscureRequire(module, 'fetch-cookie');
+	const fetchCookie = _require('fetch-cookie');
 	makeFetch = cookieJar => fetchCookie(crossFetch, cookieJar);
 } else {
 	makeFetch = () => crossFetch;
@@ -116,11 +117,11 @@ class Client extends ClientInterface {
 				});
 			}
 
-			fetchOptions.headers.delete('Content-Type');
+			fetchOptions.headers.set('Content-Type', 'multipart/form-data');
 			fetchOptions.body = new FormData();
 			for (let file of files) {
-				const blob = new global.Blob([ file.value ], { type: file.type });
-				fetchOptions.body.append(file.name, blob, file.name);
+				const blob = new Blob([ file.value ], { type: file.type });
+				fetchOptions.body.set(file.name, blob);
 			}
 		}
 
