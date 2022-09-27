@@ -1,6 +1,6 @@
 import { makeFetch, Headers, FormData, Blob, IS_WEB } from './fetch.*.js';
 import msgpack from 'msgpack-lite';
-import pkg from '../package.json';
+import { version as pkgVersion } from '../package.json';
 
 import ClientInterface from './client-interface.js';
 import { msgpackCodec } from './util2.js';
@@ -19,7 +19,7 @@ class Client extends ClientInterface {
 	 */
 	constructor ({
 		host = 'http://localhost:1111',
-		userAgent = `AKSOClientJS/${pkg.version} (+https://github.com/AksoEo/client-js)`,
+		userAgent = `AKSOClientJS/${pkgVersion} (+https://github.com/AksoEo/client-js)`,
 		cookieJar = undefined,
 		headers = {}
 	} = {}) {
