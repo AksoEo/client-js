@@ -20,7 +20,11 @@ const compileSrc = function (source, isBrowserBuild) {
 					["@babel/preset-env", {
 						modules: isBrowserBuild ? false : undefined,
 	                    useBuiltIns: 'usage',
-	                    corejs: pkg.dependencies['core-js']
+	                    corejs: pkg.dependencies['core-js'],
+	                    exclude: [
+	                    	'@babel/plugin-transform-modules-commonjs',
+	                    	'@babel/plugin-proposal-dynamic-import',
+	                    ],
 					}]
 				],
 				plugins: [
