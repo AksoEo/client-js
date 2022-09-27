@@ -8,6 +8,8 @@ This package is [available on npm](https://npmjs.com/package/@tejo/akso-client):
 npm install @tejo/akso-client
 ```
 
+It requires ESM.
+
 ### Usage Notes
 - Use `UserClient` to get started with user-based authentication
 - Use `AppClient` for app-based authentication (i.e. with API keys and such)
@@ -21,4 +23,4 @@ For more details see the [documentation](https://github.com/AksoEo/docs) or the 
 ### Development Notes
 Build with `npm run build`, or watch with `npm run watch`.
 
-Building will create a `dist` with three files for nodejs, nodejs ESM, and browser ESM for use with module bundlers.
+Building will create a `dist` with two files for nodejs ESM and browser ESM for use with module bundlers.

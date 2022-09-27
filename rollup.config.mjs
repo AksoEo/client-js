@@ -35,16 +35,10 @@ const inputOptions = isWeb => ({
 
 export default [
 	{
-		output: [
-			{
-				file: 'dist/index.node.mjs',
-				format: 'esm',
-			},
-			{
-				file: 'dist/index.node.js',
-				format: 'cjs',
-			}
-		],
+		output: {
+			file: 'dist/index.node.mjs',
+			format: 'esm',
+		},
 		...inputOptions(false),
 	},
 	{
