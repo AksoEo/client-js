@@ -1,6 +1,6 @@
 import crossFetch, { Headers } from 'cross-fetch';
 import msgpack from 'msgpack-lite';
-import FormData from 'form-data';
+import { FormData } from 'formdata-node';
 
 import ClientInterface from './client-interface';
 import { msgpackCodec } from './util2';
@@ -109,25 +109,18 @@ class Client extends ClientInterface {
 
 		if (files.length) {
 			if (fetchOptions.body) {
-				let value = Buffer.from(fetchOptions.body);
-				const type = fetchOptions.headers.get('Content-Type');
-				// on the web, FormData expects blobs and not array buffers
-				if (IS_WEB) value = new global.Blob([value], { type });
 				files.unshift({
 					name: 'req',
-					value,
-					type
+					value: Buffer.from(fetchOptions.body),
+					type: fetchOptions.headers.get('Content-Type')
 				});
 			}
 
 			fetchOptions.headers.delete('Content-Type');
 			fetchOptions.body = new FormData();
 			for (let file of files) {
-				// on the web, the third parameter is the filename property, not options
-				fetchOptions.body.append(file.name, file.value, IS_WEB ? file.name : {
-					contentType: file.type,
-					filename: file.name // this property must be present to tell the server it's a file not a field
-				});
+				const blob = new global.Blob([ file.value ], { type: file.type });
+				fetchOptions.body.append(file.name, blob, file.name);
 			}
 		}
 
