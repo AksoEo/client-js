@@ -2,11 +2,8 @@
   "name": "@tejo/akso-client",
   "version": "0.4.6",
   "description": "A JavaScript client for AKSO",
-  "main": "dist/index.node.js",
-  "module": "dist/index.node.mjs",
-  "exports": {
-    "browser": "dist/index.browser.js"
-  },
+  "main": "dist/index.node.mjs",
+  "browser": "dist/index.browser.js",
   "type": "module",
   "sideEffects": false,
   "scripts": {
