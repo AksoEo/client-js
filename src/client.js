@@ -1,27 +1,10 @@
-import crossFetch, { Headers } from 'cross-fetch';
+import { makeFetch, Headers, FormData, Blob, IS_WEB } from './fetch.*.js';
 import msgpack from 'msgpack-lite';
-import { FormData, Blob } from 'formdata-node';
-import { createRequire } from 'module';
+import pkg from '../package.json';
 
 import ClientInterface from './client-interface.js';
 import { msgpackCodec } from './util2.js';
 
-const _require = createRequire(import.meta.url);
-
-const pkg = _require('../package.json');
-
-/* eslint-disable no-undef */
-const IS_WEB = typeof window !== 'undefined' // document
-	|| (typeof WorkerGlobalScope !== 'undefined' && global instanceof WorkerGlobalScope); // worker
-/* eslint-enable no-undef */
-
-let makeFetch;
-if (!IS_WEB) { // we only need fetch-cookie on nodejs
-	const fetchCookie = _require('fetch-cookie');
-	makeFetch = cookieJar => fetchCookie(crossFetch, cookieJar);
-} else {
-	makeFetch = () => crossFetch;
-}
 
 /**
  * A client using no authentication to communicate with the AKSO API

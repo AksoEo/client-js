@@ -1,5 +1,5 @@
 import Url from 'url';
-import { Headers } from 'cross-fetch';
+import { Headers } from './fetch.*.js';
 import { base64url } from 'rfc4648';
 
 import { byteArraysToBuffers, containsBuffer } from './util2.js';

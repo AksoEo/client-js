@@ -19,6 +19,6 @@ npm install @tejo/akso-client
 For more details see the [documentation](https://github.com/AksoEo/docs) or the JSDoc in this library.
 
 ### Development Notes
-For development and building, consult `npx gulp --tasks`.
+Build with `npm run build`, or watch with `npm run watch`.
 
-Building will create a `dist` and `dist-esm` folder—`dist` uses commonjs and is used in node, and `dist-esm` uses the ES module syntax and is intended to be used by module bundlers (to allow for e.g. tree shaking).
+Building will create a `dist` with three files for nodejs, nodejs ESM, and browser ESM for use with module bundlers.

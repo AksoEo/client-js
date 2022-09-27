@@ -1,4 +1,4 @@
-import { Headers } from 'cross-fetch';
+import { Headers } from './fetch.*.js';
 
 import ClientInterface from './client-interface.js';
 import Client from './client.js';
