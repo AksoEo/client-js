@@ -100,7 +100,6 @@ class Client extends ClientInterface {
 				});
 			}
 
-			fetchOptions.headers.set('Content-Type', 'multipart/form-data');
 			fetchOptions.body = new FormData();
 			for (let file of files) {
 				const blob = new Blob([ file.value ], { type: file.type });
