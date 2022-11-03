@@ -28,7 +28,7 @@ const oneCharSearchWords = new XRegExp(
 	`
 	(^|[^\\p{L}\\p{N}]) # Ensure it's the beginning of a word
 
-	([\\p{L}\\p{N}]{2}) # Match any one-letter word
+	([\\p{L}\\p{N}]) # Match any one-letter word
 
 	(?=$|[^\\p{L}\\p{N}]) # Ensure it's the end of a word
 	`,
