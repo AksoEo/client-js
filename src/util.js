@@ -44,7 +44,7 @@ export function transformSearch (str) {
 	const containsOperators = searchOperators.test(str);
 
 	if (containsOperators) {
-		str = str.replace(searchWordsTooShort, '$1$2*$3');
+		str = str.replace(searchWordsTooShort, '$1$2*');
 	} else {
 		str = str
 			.match(searchWordChars)
