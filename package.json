@@ -1,6 +1,6 @@
 {
   "name": "@tejo/akso-client",
-  "version": "0.4.11",
+  "version": "0.4.12",
   "description": "A JavaScript client for AKSO",
   "main": "dist/index.node.mjs",
   "browser": "dist/index.browser.js",
