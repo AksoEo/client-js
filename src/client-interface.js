@@ -71,7 +71,7 @@ class ClientInterface {
 				if (typeof val === 'object' && val !== null && !Array.isArray(val) && 'str' in val && 'cols' in val) {
 					// we need to escape the search string like a CSV field
 					let search = (val.str || '').toString();
-					if (search.match(/[,\r\n"]/)) {
+					if (search.match(/[,\r\n"\s]/)) {
 						// contains characters that must be escaped
 						search = '"' + search.replace(/"/g, '""') + '"';
 					}
