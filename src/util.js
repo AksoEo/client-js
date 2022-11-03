@@ -24,7 +24,16 @@ export function isValidSearch (str) {
 const bannedSearchChars = new XRegExp('[^\\p{L}\\p{N}\\s*+\\-"]', 'g');
 const searchWordChars = new XRegExp('([\\p{L}\\p{N}]+)', 'g');
 const searchOperators = /[*+\-"]/;
-const searchWordsTooShort = new XRegExp(
+const oneCharSearchWords = new XRegExp(
+	`
+	(^|[^\\p{L}\\p{N}]) # Ensure it's the beginning of a word
+
+	([\\p{L}\\p{N}]{2}) # Match any one-letter word
+
+	(?=$|[^\\p{L}\\p{N}]) # Ensure it's the end of a word
+	`,
+	'gx');
+const twoCharSearchWords = new XRegExp(
 	`
 	(^|[^\\p{L}\\p{N}]) # Ensure it's the beginning of a word
 
@@ -39,12 +48,13 @@ const searchWordsTooShort = new XRegExp(
  * @return {string}
  */
 export function transformSearch (str) {
-	str = str.replace(bannedSearchChars, ' ');
+	str = str
+		.replace(bannedSearchChars, ' ')
+		.replace(oneCharSearchWords, '$1');
 
 	const containsOperators = searchOperators.test(str);
-
 	if (containsOperators) {
-		str = str.replace(searchWordsTooShort, '$1$2*');
+		str = str.replace(twoCharSearchWords, '$1$2*');
 	} else {
 		str = str
 			.match(searchWordChars)
