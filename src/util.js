@@ -56,8 +56,7 @@ export function transformSearch (str) {
 	if (containsOperators) {
 		str = str.replace(twoCharSearchWords, '$1$2*');
 	} else {
-		str = str
-			.match(searchWordChars)
+		str = (str.match(searchWordChars) || [])
 			.map(w => w + '*')
 			.join(' ');
 	}
