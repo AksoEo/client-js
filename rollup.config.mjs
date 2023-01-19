@@ -3,7 +3,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import alias from '@rollup/plugin-alias';
 import json from '@rollup/plugin-json';
 
-const inputOptions = isWeb => ({
+const inputOptions = (isWeb) => ({
 	input: 'src/index.js',
 	plugins: [
 		resolve(),
@@ -20,17 +20,10 @@ const inputOptions = isWeb => ({
 		// dependencies that should not be bundled into the file
 		'fetch-cookie',
 		'msgpack-lite',
-		'node-fetch',
 		'qrcode',
 		'rfc4648',
 		'xregexp',
 	],
-	moduleContext: (id) => {
-		if (id.includes('formdata-node')) {
-			// module expects `this` to be `globalThis`
-			return 'globalThis';
-		}
-	}
 });
 
 export default [
@@ -38,6 +31,13 @@ export default [
 		output: {
 			file: 'dist/index.node.mjs',
 			format: 'esm',
+		},
+		...inputOptions(false),
+	},
+	{
+		output: {
+			file: 'dist/index.node.cjs',
+			format: 'cjs',
 		},
 		...inputOptions(false),
 	},
