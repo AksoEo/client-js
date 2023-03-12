@@ -101,6 +101,7 @@ class Client extends ClientInterface {
 			}
 
 			fetchOptions.body = new FormData();
+			fetchOptions.headers.delete('Content-Type');
 			for (let file of files) {
 				const blob = new Blob([ file.value ], { type: file.type });
 				fetchOptions.body.set(file.name, blob);
