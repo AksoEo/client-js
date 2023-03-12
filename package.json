@@ -1,6 +1,6 @@
 {
   "name": "@tejo/akso-client",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "A JavaScript client for AKSO",
   "exports": {
     ".": {
