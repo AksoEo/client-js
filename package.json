@@ -1,15 +1,15 @@
 {
   "name": "@tejo/akso-client",
-  "version": "0.5.1",
+  "version": "1.0.0",
   "description": "A JavaScript client for AKSO",
   "exports": {
     ".": {
       "node": {
-        "module": "dist/index.node.mjs",
-        "import": "dist/index.node.mjs",
-        "require": "dist/index.node.cjs"
+        "module": "./dist/index.node.mjs",
+        "import": "./dist/index.node.mjs",
+        "require": "./dist/index.node.cjs"
       },
-      "default": "dist/index.browser.js"
+      "default": "./dist/index.browser.js"
     }
   },
   "module": "dist/index.node.mjs",
