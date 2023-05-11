@@ -1,6 +1,6 @@
 {
   "name": "@tejo/akso-client",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A JavaScript client for AKSO",
   "exports": {
     ".": {
@@ -47,7 +47,7 @@
     "rollup": "^2.79.1"
   },
   "dependencies": {
-    "fetch-cookie": "^0.7.3",
+    "fetch-cookie": "^2.1.0",
     "msgpack-lite": "^0.1.26",
     "qrcode": "^1.5.0",
     "rfc4648": "^1.5.0",
